@@ -10,7 +10,9 @@ Open ports:
 
 ### http
 Going to our ip `10.10.11.106` we are prompted with a login, simply by trying the a few basic admin creds we can get in:
+
 > Username: admin
+> 
 > Password: admin
 
 Boom! We've got a slight foothold. Now lets move to __*attack mode*__
@@ -49,7 +51,9 @@ tony::DRIVER:c8db3c62a89517e7:94CFE550B36EF78F0154AF9DC4F932EC:01010000000000000
 ```
 
 Now we can use john to attempt to crack this hash! Running `john tony.hash --fork=2 -w=/usr/share/wordlists/rockyou.txt` we get the following creds:
+
 > Username: tony
+>
 > Password: liltony
 
 ## Attack
