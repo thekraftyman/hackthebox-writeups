@@ -6,4 +6,4 @@
 - Machines/Driver.md
 - Machines/Forge.md
 - Machines/Seal.md
-
+- Machines/Secret.md
